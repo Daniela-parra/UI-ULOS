@@ -35,6 +35,23 @@ const Dashboard = () => {
     }
   };
 
+  const handleEliminar = () => {
+    if (tareaSeleccionada) {
+      // Filtrar la tarea eliminada
+      const nuevasAsignaciones = asignaciones[cursoSeleccionado].filter(
+        (tarea) => tarea.id !== tareaSeleccionada.id
+      );
+      // Actualizar estado y localStorage
+      setAsignaciones((prev) => ({
+        ...prev,
+        [cursoSeleccionado]: nuevasAsignaciones,
+      }));
+      localStorage.setItem("asignaciones", JSON.stringify(Object.values(nuevasAsignaciones).flat()));
+
+      // Limpiar selección
+      setTareaSeleccionada(null);
+    }
+  };
   return (
     <div className="dashboard-container">
       {/* Menú lateral */}
@@ -97,6 +114,9 @@ const Dashboard = () => {
           </button>
           <button className="feedback-btn" onClick={handleFeedback} disabled={!tareaSeleccionada}>
             💬 Feedback
+          </button>
+          <button className="delete-btn" onClick={handleEliminar} disabled={!tareaSeleccionada}>
+            🗑️ Eliminar
           </button>
         </div>
       </main>
