@@ -108,17 +108,18 @@ const Dashboard = () => {
         </button>
 
         {/* Botones de Editar y Feedback */}
-        <div className="btn-group">
-          <button className="edit-btn" onClick={handleEditar} disabled={!tareaSeleccionada}>
-            ✏️ Editar
-          </button>
-          <button className="feedback-btn" onClick={handleFeedback} disabled={!tareaSeleccionada}>
-            💬 Feedback
-          </button>
-          <button className="delete-btn" onClick={handleEliminar} disabled={!tareaSeleccionada}>
-            🗑️ Eliminar
-          </button>
-        </div>
+        <div className="botones-container"></div>
+          <div className="btn-group">
+            <button className="edit-btn" onClick={handleEditar} disabled={!tareaSeleccionada}>
+              ✏️ Editar
+            </button>
+            <button className="feedback-btn" onClick={handleFeedback} disabled={!tareaSeleccionada}>
+              💬 Feedback
+            </button>
+            <button className="delete-btn" onClick={handleEliminar} disabled={!tareaSeleccionada}>
+              🗑️ Eliminar
+            </button>
+          </div>
       </main>
     </div>
   );

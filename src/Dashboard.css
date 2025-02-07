@@ -128,3 +128,9 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
+.botones-container {
+  display: flex;
+  justify-content: center;  /* Alinea los botones al centro */
+  gap: 10px;  /* Espacio entre botones */
+  margin-top: 20px;  /* Espacio superior */
+}
