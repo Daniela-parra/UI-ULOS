@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 const cursosMock = ["Curso 1", "Curso 2", "Curso 3", "Curso 4"];
@@ -13,8 +14,12 @@ const asignacionesMock = {
 };
 
 const Dashboard = () => {
-  const [cursoSeleccionado, setCursoSeleccionado] = useState("Curso 1");
+    const navigate = useNavigate();
 
+  const [cursoSeleccionado, setCursoSeleccionado] = useState("Curso 1");
+  const handleLogout = () => {
+    navigate("/"); // Redirigir al login
+  };
   return (
     <div className="dashboard-container">
       {/* Menú lateral */}
@@ -37,9 +42,10 @@ const Dashboard = () => {
       <main className="content">
         <header>
           <h1>Asignaciones - {cursoSeleccionado}</h1>
-          <button className="logout-btn">Cerrar sesión</button>
+          <button onClick={handleLogout}>Cerrar sesión</button>
         </header>
 
+        
         <table>
           <thead>
             <tr>

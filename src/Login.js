@@ -33,6 +33,9 @@ const Login = ({ setUserRole }) => {
           </div>
           <button type="submit" className="login-btn">INICIAR SESIÓN</button>
         </form>
+         {/* Enlace al registro */}
+      <p>¿No tienes cuenta? <span style={{ color: "blue", cursor: "pointer" }} onClick={() => navigate("/register")}>Regístrate aquí</span></p>
+    
       </div>
     </div>
   );
