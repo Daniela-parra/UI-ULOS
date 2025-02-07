@@ -62,9 +62,9 @@ const Dashboard = () => {
         </table>
 
         {/* Botón de agregar asignación */}
-        <button 
+        <button class
           className="add-btn" 
-          onClick={() => navigate("/crear-asignacion")}
+          onClick={() => navigate("/createAssignment")}
         >
           +
         </button>

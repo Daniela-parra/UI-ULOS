@@ -1,0 +1,93 @@
+.crear-asignacion-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    font-size: 24px;
+    color: #3a0057;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+    color: #3a0057;
+    display: block;
+    margin: 10px 0 5px;
+  }
+  
+  input, textarea, select {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  input:focus, textarea:focus, select:focus {
+    border: 2px solid #6a0dad;
+    outline: none;
+  }
+  
+  button {
+    background: #4b0082;
+    color: white;
+    border: 2px solid #4b0082;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  button:hover {
+    background: #530b92;
+  }
+  
+  button.cancelar {
+    background: white;
+    color: #4b0082;
+    border: 2px solid #6a0dad;
+  }
+  
+  button.cancelar:hover {
+    background: #4b0082;
+    color: white;
+  }
+  
+  .file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .file-upload-label {
+    display: inline-block;
+    background: #4b0082;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .file-upload-input {
+    display: none;
+  }
+  
+  .icono-subir {
+    font-size: 18px;
+  }
+  .btn-group {
+    display: flex;
+    gap: 15px; /* Espacio entre los botones */
+  }
+ 
