@@ -42,7 +42,7 @@
   .login-btn {
     width: 100%;
     padding: 10px;
-    background: purple;
+    background: #4b0082;
     color: white;
     border: none;
     border-radius: 5px;
@@ -51,7 +51,7 @@
   }
   
   .login-btn:hover {
-    background: darkpurple;
+    background: #4b0082;
   }
   
   .register-text {
@@ -60,7 +60,7 @@
   }
   
   .register-text a {
-    color: purple;
+    color: #4b0082;
     font-weight: bold;
     text-decoration: none;
   }

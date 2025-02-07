@@ -14,12 +14,9 @@ const asignacionesMock = {
 };
 
 const Dashboard = () => {
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const [cursoSeleccionado, setCursoSeleccionado] = useState("Curso 1");
-  const handleLogout = () => {
-    navigate("/"); // Redirigir al login
-  };
+
   return (
     <div className="dashboard-container">
       {/* Menú lateral */}
@@ -42,10 +39,9 @@ const Dashboard = () => {
       <main className="content">
         <header>
           <h1>Asignaciones - {cursoSeleccionado}</h1>
-          <button onClick={handleLogout}>Cerrar sesión</button>
+          <button className="logout-btn" onClick={() => navigate("/")}>Cerrar sesión</button>
         </header>
 
-        
         <table>
           <thead>
             <tr>
@@ -64,6 +60,14 @@ const Dashboard = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Botón de agregar asignación */}
+        <button 
+          className="add-btn" 
+          onClick={() => navigate("/crear-asignacion")}
+        >
+          +
+        </button>
       </main>
     </div>
   );
