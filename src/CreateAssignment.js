@@ -11,8 +11,30 @@ const CreateAssignment = () => {
   const navigate = useNavigate();
 
   const handleGuardar = () => {
-    const nuevaAsignacion = { nombre: titulo, fecha, definicion, archivo };
-    localStorage.setItem("nuevaAsignacion", JSON.stringify(nuevaAsignacion));
+    if (!titulo || !descripcion || !fecha || !definicion) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+
+    const nuevaAsignacion = {
+      id: Date.now(),
+      titulo,
+      descripcion,
+      fecha,
+      definicion,
+      archivo: archivo ? archivo.name : "Sin archivo",
+    };
+
+    // Obtener las asignaciones actuales
+    const asignacionesExistentes = JSON.parse(localStorage.getItem("asignaciones")) || [];
+
+    // Agregar la nueva asignación
+    asignacionesExistentes.push(nuevaAsignacion);
+
+    // Guardar en localStorage
+    localStorage.setItem("asignaciones", JSON.stringify(asignacionesExistentes));
+
+    // Redirigir al dashboard
     navigate("/dashboard");
   };
 
@@ -49,13 +71,13 @@ const CreateAssignment = () => {
         />
         {archivo && <span>{archivo.name}</span>}
       </div>
-    
 
+      {/* Botones */}
       <div className="btn-group">
-      <button onClick={handleGuardar}>Guardar</button>
-      <button className="cancelar" onClick={() => navigate("/dashboard")}>
-        Cancelar
-      </button>
+        <button onClick={handleGuardar}>Guardar</button>
+        <button className="cancelar" onClick={() => navigate("/dashboard")}>
+          Cancelar
+        </button>
       </div>
     </div>
   );
