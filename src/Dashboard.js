@@ -8,12 +8,10 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [cursoSeleccionado, setCursoSeleccionado] = useState("Curso 1");
   const [asignaciones, setAsignaciones] = useState({});
+  const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
 
   useEffect(() => {
-    // Obtener las asignaciones guardadas en localStorage
     const asignacionesGuardadas = JSON.parse(localStorage.getItem("asignaciones")) || [];
-
-    // Agrupar las asignaciones por curso
     const asignacionesPorCurso = {};
     asignacionesGuardadas.forEach((asig) => {
       if (!asignacionesPorCurso[cursoSeleccionado]) {
@@ -24,6 +22,18 @@ const Dashboard = () => {
 
     setAsignaciones(asignacionesPorCurso);
   }, [cursoSeleccionado]);
+
+  const handleEditar = () => {
+    if (tareaSeleccionada) {
+      navigate(`/editAssignment/${tareaSeleccionada.id}`);
+    }
+  };
+
+  const handleFeedback = () => {
+    if (tareaSeleccionada) {
+      navigate(`/feedback/${tareaSeleccionada.id}`);
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -58,25 +68,37 @@ const Dashboard = () => {
               <th>Asignación</th>
               <th>Fecha Límite</th>
               <th>Definición</th>
-              <th>Archivo</th>
             </tr>
           </thead>
           <tbody>
             {asignaciones[cursoSeleccionado]?.map((asignacion, index) => (
-              <tr key={index}>
+              <tr
+                key={index}
+                className={tareaSeleccionada?.id === asignacion.id ? "selected" : ""}
+                onClick={() => setTareaSeleccionada(asignacion)}
+              >
                 <td>{asignacion.titulo}</td>
                 <td>{asignacion.fecha}</td>
                 <td>{asignacion.definicion}</td>
-                <td>{asignacion.archivo}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Botón de agregar asignación */}
+        {/* Botón de agregar asignación arriba */}
         <button className="add-btn" onClick={() => navigate("/createAssignment")}>
           +
         </button>
+
+        {/* Botones de Editar y Feedback */}
+        <div className="btn-group">
+          <button className="edit-btn" onClick={handleEditar} disabled={!tareaSeleccionada}>
+            ✏️ Editar
+          </button>
+          <button className="feedback-btn" onClick={handleFeedback} disabled={!tareaSeleccionada}>
+            💬 Feedback
+          </button>
+        </div>
       </main>
     </div>
   );

@@ -1,90 +1,130 @@
-/* Estilos del Dashboard */
+/* Mantener el estilo original */
 .dashboard-container {
-    display: flex;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  .sidebar {
-    width: 200px;
-    background: #6a0dad;
-    color: white;
-    padding: 20px;
-  }
-  
-  .sidebar h3 {
-    margin-bottom: 10px;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    padding: 10px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .sidebar li:hover, .sidebar .active {
-    background: #4b0082;
-  }
-  
-  .content {
-    flex-grow: 1;
-    padding: 20px;
-  }
-  
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .logout-btn {
-    background: #6a0dad;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .logout-btn:hover {
-    background: #4b0082;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  table th, table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  table th {
-    background: #6a0dad;
-    color: white;
-  }
-  
-  .add-btn {
-    margin-top: 30px;
-    padding: 20px;
-    font-size: 24px;
-    background: #4b0082;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 100%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 200px;
+  background: #6a0dad;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h3 {
+  margin-bottom: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sidebar li:hover,
+.sidebar .active {
+  background: #4b0082;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  background: #6a0dad;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #4b0082;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+table th {
+  background: #6a0dad;
+  color: white;
+}
+
+/* Estilo para la fila seleccionada */
+.selected {
+  background-color: #e0c3fc !important;
+}
+
+/* Botón de agregar (arriba) */
+.add-btn {
+  margin: 20px auto;
+  display: block;
+  padding: center;
+  font-size: 20px;
+  background: #4b0082;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  transition: 0.3s;
+}
+
+.add-btn:hover {
+  background: #530b92;
+}
+
+/* Botones de edición y feedback */
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.edit-btn,
+.feedback-btn {
+  background: #4b0082;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.edit-btn:hover,
+.feedback-btn:hover {
+  background: #530b92;
+}
+
+/* Botón deshabilitado */
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
