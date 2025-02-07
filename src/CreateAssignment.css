@@ -90,3 +90,17 @@
     display: flex;
     gap: 15px; /* Espacio entre los botones */
   }
+
+  .definicion-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .btn-lupa {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateAssignment.css";
 
@@ -8,7 +8,22 @@ const CreateAssignment = () => {
   const [fecha, setFecha] = useState("");
   const [definicion, setDefinicion] = useState("");
   const [archivo, setArchivo] = useState(null);
+  const [definiciones, setDefiniciones] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const definicionesGuardadas = JSON.parse(localStorage.getItem("definiciones")) || [];
+    setDefiniciones(definicionesGuardadas);
+  }, []);
+
+  const handleDefinicionChange = (e) => {
+    const valor = e.target.value;
+    if (valor === "crear-nueva") {
+      navigate("/createDefinition");
+    } else {
+      setDefinicion(valor);
+    }
+  };
 
   const handleGuardar = () => {
     if (!titulo || !descripcion || !fecha || !definicion) {
@@ -25,16 +40,10 @@ const CreateAssignment = () => {
       archivo: archivo ? archivo.name : "Sin archivo",
     };
 
-    // Obtener las asignaciones actuales
     const asignacionesExistentes = JSON.parse(localStorage.getItem("asignaciones")) || [];
-
-    // Agregar la nueva asignación
     asignacionesExistentes.push(nuevaAsignacion);
-
-    // Guardar en localStorage
     localStorage.setItem("asignaciones", JSON.stringify(asignacionesExistentes));
 
-    // Redirigir al dashboard
     navigate("/dashboard");
   };
 
@@ -52,13 +61,26 @@ const CreateAssignment = () => {
       <input type="datetime-local" value={fecha} onChange={(e) => setFecha(e.target.value)} />
 
       <label>Definición</label>
-      <select value={definicion} onChange={(e) => setDefinicion(e.target.value)}>
-        <option value="">Seleccione un tipo</option>
-        <option value="Cypress">Cypress</option>
-        <option value="Tp1">Tp1</option>
-      </select>
+      <div className="definicion-container">
+        <select value={definicion} onChange={handleDefinicionChange}>
+          <option value="">Seleccione un tipo</option>
+          {definiciones.map((def, index) => (
+            <option key={index} value={def}>{def}</option>
+          ))}
+          <option value="crear-nueva" style={{ color: "purple" }}>
+            Crear nueva definición
+          </option>
+        </select>
+        {definicion && definicion !== "crear-nueva" && (
+          <button
+          className="btn-lupa"
+          onClick={() => navigate(`/descriptionDefinition/${definicion}`)}
+        >
+          🔍
+        </button>
+        )}
+      </div>
 
-      {/* Botón de Carga de Archivo */}
       <div className="file-upload-container">
         <label htmlFor="archivo" className="file-upload-label">
           Examinar archivo 📂
@@ -72,7 +94,6 @@ const CreateAssignment = () => {
         {archivo && <span>{archivo.name}</span>}
       </div>
 
-      {/* Botones */}
       <div className="btn-group">
         <button onClick={handleGuardar}>Guardar</button>
         <button className="cancelar" onClick={() => navigate("/dashboard")}>

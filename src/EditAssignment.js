@@ -10,17 +10,32 @@ const EditAssignment = () => {
   const [fecha, setFecha] = useState("");
   const [definicion, setDefinicion] = useState("");
   const [archivo, setArchivo] = useState(null);
+  const [definiciones, setDefiniciones] = useState([]);
 
+  // Cargar asignaciones y definiciones desde localStorage
   useEffect(() => {
     const asignaciones = JSON.parse(localStorage.getItem("asignaciones")) || [];
     const tarea = asignaciones.find((asig) => asig.id === parseInt(id));
+
     if (tarea) {
       setTitulo(tarea.titulo);
       setDescripcion(tarea.descripcion);
       setFecha(tarea.fecha);
       setDefinicion(tarea.definicion);
     }
+
+    const definicionesGuardadas = JSON.parse(localStorage.getItem("definiciones")) || [];
+    setDefiniciones(definicionesGuardadas);
   }, [id]);
+
+  const handleDefinicionChange = (e) => {
+    const valor = e.target.value;
+    if (valor === "crear-nueva") {
+      navigate("/createDefinition");
+    } else {
+      setDefinicion(valor);
+    }
+  };
 
   const handleGuardar = () => {
     if (!titulo || !descripcion || !fecha || !definicion) {
@@ -53,11 +68,25 @@ const EditAssignment = () => {
       <input type="datetime-local" value={fecha} onChange={(e) => setFecha(e.target.value)} />
 
       <label>Definición</label>
-      <select value={definicion} onChange={(e) => setDefinicion(e.target.value)}>
-        <option value="">Seleccione un tipo</option>
-        <option value="Cypress">Cypress</option>
-        <option value="Tp1">Tp1</option>
-      </select>
+      <div className="definicion-container">
+        <select value={definicion} onChange={handleDefinicionChange}>
+          <option value="">Seleccione un tipo</option>
+          {definiciones.map((def, index) => (
+            <option key={index} value={def}>{def}</option>
+          ))}
+          <option value="crear-nueva" style={{ color: "purple" }}>
+            Crear nueva definición
+          </option>
+        </select>
+        {definicion && definicion !== "crear-nueva" && (
+          <button
+            className="btn-lupa"
+            onClick={() => navigate(`/descriptionDefinition/${definicion}`)}
+          >
+            🔍
+          </button>
+        )}
+      </div>
 
       <div className="file-upload-container">
         <label htmlFor="archivo" className="file-upload-label">

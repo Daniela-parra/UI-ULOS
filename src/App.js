@@ -6,6 +6,8 @@ import Dashboard from "./Dashboard"; // Nueva pantalla del profesor/administrado
 import CreateAssignment from "./CreateAssignment";
 import FeedbackAssignment from "./FeedbackAssigment";
 import EditAssignment from "./EditAssignment";
+import CreateDefinition from "./CreateDefinition";
+import DescriptionDefinition from "./DescriptionDefinition";
 
 function App() {
   const [userRole, setUserRole] = useState(null); // Guardar el rol del usuario
@@ -19,6 +21,8 @@ function App() {
         <Route path="/createAssignment" element={userRole ? <CreateAssignment /> : <Navigate to="/" />} />
         <Route path="/feedback/:id" element={<FeedbackAssignment />} />
         <Route path="/editAssignment/:id" element={<EditAssignment />} />
+        <Route path="/createDefinition" element={userRole ? <CreateDefinition /> : <Navigate to="/" />} />
+        <Route path="/descriptionDefinition/:nombreDefinicion" element={<DescriptionDefinition />} />
       </Routes>
     </Router>
   );
