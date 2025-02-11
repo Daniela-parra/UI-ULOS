@@ -13,6 +13,9 @@ const Login = ({ setUserRole }) => {
     if (email === "profesor@uniandes" || email === "admin@uniandes") {
       setUserRole("profesor"); // O "admin"
       navigate("/dashboard");
+    } else if (email === "estudiante@uniandes") {
+      setUserRole("estudiante");
+      navigate("/studentDashboard");
     } else {
       alert("Acceso denegado o usuario no reconocido.");
     }
