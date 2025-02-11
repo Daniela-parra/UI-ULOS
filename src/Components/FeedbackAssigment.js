@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./Feedback.css";
+import "../Styles/Feedback.css";
 
 const FeedbackAssignment = () => {
   const navigate = useNavigate();

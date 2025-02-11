@@ -9,13 +9,13 @@
   
   h1 {
     font-size: 40px;
-    color: #3a0057;
+    color: #300359;
     margin-bottom: 20px;
   }
   
   label {
     font-weight: bold;
-    color: #3a0057;
+    color: #300359;
     display: block;
     margin: 10px 0 5px;
   }
@@ -40,9 +40,9 @@
   }
   
   button {
-    background: #4b0082;
+    background: #300359;
     color: white;
-    border: 2px solid #4b0082;
+    border: 2px solid #300359;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
@@ -50,17 +50,17 @@
   }
   
   button:hover {
-    background: #530b92;
+    background: #300359;
   }
   
   button.cancelar {
     background: white;
-    color: #4b0082;
-    border: 2px solid #6a0dad;
+    color: #300359;
+    border: 2px solid #300359;
   }
   
   button.cancelar:hover {
-    background: #4b0082;
+    background: #300359;
     color: white;
   }
   
@@ -72,7 +72,7 @@
   
   .file-upload-label {
     display: inline-block;
-    background: #4b0082;
+    background: #300359;
     color: white;
     padding: 10px 15px;
     border-radius: 5px;

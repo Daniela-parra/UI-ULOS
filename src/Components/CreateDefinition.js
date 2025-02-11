@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./CreateDefinition.css";
+import "../Styles/CreateDefinition.css";
 
 const CreateDefinition = () => {
   const [nombre, setNombre] = useState("");

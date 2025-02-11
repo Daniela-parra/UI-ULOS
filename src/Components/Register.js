@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./App.css"; // Usa los mismos estilos de Login si quieres
+import "../App.css"; // Usa los mismos estilos de Login si quieres
 
 const Register = () => {
   return (

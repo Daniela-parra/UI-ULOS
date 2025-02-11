@@ -27,9 +27,8 @@
     max-width: 800px;
     margin-bottom: 20px;
   }
-  
- 
-  
+
+
   /* Título de la tarea */
   .task-title {
     font-size: 22px;
@@ -52,14 +51,14 @@
   }
   
   .feedback-table th {
-    background: #6a0dad;
+    background: #300359;
     color: white;
   }
   
   /* Botón de volver */
   .back-btn {
     margin-top: 20px;
-    background: #4b0082;
+    background: #300359;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -69,6 +68,6 @@
   }
   
   .back-btn:hover {
-    background: #530b92;
+    background: #300359;
   }
   

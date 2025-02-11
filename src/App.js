@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Login from "./Login";
-import Register from "./Register";
-import Dashboard from "./Dashboard"; // Nueva pantalla del profesor/administrador
-import CreateAssignment from "./CreateAssignment";
-import FeedbackAssignment from "./FeedbackAssigment";
-import EditAssignment from "./EditAssignment";
-import CreateDefinition from "./CreateDefinition";
-import DescriptionDefinition from "./DescriptionDefinition";
-import StudentDashboard from "./StudentDashboard";
+import Login from "./Components/Login";
+import Register from "./Components/Register";
+import Dashboard from "./Components/Dashboard"; // Nueva pantalla del profesor/administrador
+import CreateAssignment from "./Components/CreateAssignment";
+import FeedbackAssignment from "./Components/FeedbackAssigment";
+import EditAssignment from "./Components/EditAssignment";
+import CreateDefinition from "./Components/CreateDefinition";
+import DescriptionDefinition from "./Components/DescriptionDefinition";
+import StudentDashboard from "./Components/StudentDashboard";
+import Detail from "./Components/Detail";
 
 function App() {
   const [userRole, setUserRole] = useState(null); // Guardar el rol del usuario
@@ -25,6 +26,7 @@ function App() {
         <Route path="/editAssignment/:id" element={<EditAssignment />} />
         <Route path="/createDefinition" element={userRole ? <CreateDefinition /> : <Navigate to="/" />} />
         <Route path="/descriptionDefinition/:nombreDefinicion" element={<DescriptionDefinition />} />
+        <Route path="/detail/:id" element={<Detail />} />
       </Routes>
     </Router>
   );

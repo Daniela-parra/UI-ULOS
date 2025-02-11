@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
+import "../Styles/Dashboard.css";
 
 const cursosMock = ["Curso 1", "Curso 2", "Curso 3", "Curso 4"];
 
@@ -30,7 +30,7 @@ const StudentDashboard = () => {
 
   const handleVerDetalle = () => {
     if (tareaSeleccionada) {
-      navigate(`/detalle/${tareaSeleccionada.id}`);
+      navigate(`/detail/${tareaSeleccionada.id}`);
     }
   };
 

@@ -7,7 +7,7 @@
 
 .sidebar {
   width: 200px;
-  background: #6a0dad;
+  background: #300359;
   color: white;
   padding: 20px;
 }
@@ -29,7 +29,7 @@
 
 .sidebar li:hover,
 .sidebar .active {
-  background: #4b0082;
+  background: #9583a7;
 }
 
 .content {
@@ -45,7 +45,7 @@ header {
 }
 
 .logout-btn {
-  background: #6a0dad;
+  background: #300359;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -54,7 +54,7 @@ header {
 }
 
 .logout-btn:hover {
-  background: #4b0082;
+  background: #300359;
 }
 
 table {
@@ -70,13 +70,13 @@ table td {
 }
 
 table th {
-  background: #6a0dad;
+  background: #300359;
   color: white;
 }
 
 /* Estilo para la fila seleccionada */
 .selected {
-  background-color: #e0c3fc !important;
+  background-color: #ccbfd8 !important;
 }
 
 /* Botón de agregar (arriba) */
@@ -85,7 +85,7 @@ table th {
   display: block;
   padding: center;
   font-size: 20px;
-  background: #4b0082;
+  background: #300359;
   color: white;
   border: none;
   cursor: pointer;
@@ -96,7 +96,7 @@ table th {
 }
 
 .add-btn:hover {
-  background: #530b92;
+  background: #300359;
 }
 
 /* Botones de edición y feedback */
@@ -109,7 +109,7 @@ table th {
 
 .edit-btn,
 .feedback-btn {
-  background: #4b0082;
+  background: #300359;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -120,7 +120,7 @@ table th {
 
 .edit-btn:hover,
 .feedback-btn:hover {
-  background: #530b92;
+  background: #300359;
 }
 
 /* Botón deshabilitado */

@@ -66,14 +66,14 @@
   .btn-add {
     background: #e9e6ec;
     color: white;
-    border: #4a148c;
+    border: #300359;
     padding: 8px;
     border-radius: 5px;
     cursor: pointer;
   }
   
   .btn-add:hover {
-    background: #4a148c;
+    background: #300359;
   }
   
   .btn-delete {
@@ -106,7 +106,7 @@
   }
   
   .btn-save {
-    background: #4a148c;
+    background: #300359;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -116,13 +116,13 @@
   }
   
   .btn-save:hover {
-    background: #6a1b9a;
+    background: #300359;
   }
   
   .btn-cancel {
     background: transparent;
-    border: 2px solid #4a148c;
-    color: #4a148c;
+    border: 2px solid #300359;
+    color: #300359;
     padding: 10px 20px;
     border-radius: 5px;
     font-size: 16px;
@@ -130,7 +130,7 @@
   }
   
   .btn-cancel:hover {
-    background: #4a148c;
+    background: #300359;
     color: white;
   }
   
