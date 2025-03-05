@@ -7,9 +7,9 @@ const FeedbackAssignment = () => {
 
   const estudiantes = [
     { nombre: "Est_1", parser: "✔️ Completada", executor: "✔️ Completada" },
-    { nombre: "Est_2", parser: "✔️ Completada", executor: "⏳ En progreso" },
+    { nombre: "Est_2", parser: "❌ Fallido", executor: "⏳ En progreso" },
     { nombre: "Est_3", parser: "⏳ En progreso", executor: "❌ Pendiente" },
-    { nombre: "Est_4", parser: "❌ Pendiente", executor: "❌ Pendiente" },
+    { nombre: "Est_4", parser: "❕ Pendiente", executor: "❕ Pendiente" },
   ];
 
   return (
