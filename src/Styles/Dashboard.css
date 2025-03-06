@@ -134,3 +134,34 @@ button:disabled {
   gap: 10px;  /* Espacio entre botones */
   margin-top: 20px;  /* Espacio superior */
 }
+
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-upload-label {
+  display: inline-block;
+  background: #300359;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.file-upload-input {
+  display: none;
+}
+
+.estudiantes-section {
+  margin-bottom: 20px;
+}
+
+.estudiantes-section h2 {
+  margin-bottom: 10px;
+}
+
+.selected {
+  background-color: #ccbfd8 !important;
+} 
