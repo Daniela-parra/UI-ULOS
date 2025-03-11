@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Login setUserRole={setUserRole} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={userRole ? <Dashboard /> : <Navigate to="/" />} />
-        <Route path="/studentDashboard" element={userRole === "estudiante" ? <StudentDashboard /> : <Navigate to="/" />} />
+        <Route path="/studentDashboard" element={userRole === "student" ? <StudentDashboard /> : <Navigate to="/" />} />
         <Route path="/createAssignment" element={userRole ? <CreateAssignment /> : <Navigate to="/" />} />
         <Route path="/feedback/:id" element={<FeedbackAssignment />} />
         <Route path="/editAssignment/:id" element={<EditAssignment />} />

@@ -1,29 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Styles/Dashboard.css";
-
-const cursosMock = ["Curso 1", "Curso 2", "Curso 3", "Curso 4"];
+import api from "../api";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [cursoSeleccionado, setCursoSeleccionado] = useState("Curso 1");
-  const [asignaciones, setAsignaciones] = useState({});
+  const [cursos, setCursos] = useState([]);
+  const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
+  const [asignaciones, setAsignaciones] = useState([]);
   const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
   const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState(null);
 
-
+  // Obtener la lista de cursos
   useEffect(() => {
-    const asignacionesGuardadas = JSON.parse(localStorage.getItem("asignaciones")) || [];
-    const asignacionesPorCurso = {};
-    asignacionesGuardadas.forEach((asig) => {
-      if (!asignacionesPorCurso[cursoSeleccionado]) {
-        asignacionesPorCurso[cursoSeleccionado] = [];
-      }
-      asignacionesPorCurso[cursoSeleccionado].push(asig);
-    });
+    const fetchCursos = async () => {
+      try {
+        const response = await api.get("/courses");
+        setCursos(response.data);
 
-    setAsignaciones(asignacionesPorCurso);
+        if (response.data.length > 0) {
+          setCursoSeleccionado(response.data[0].id); // Selecciona el primer curso por defecto
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCursos();
+  }, []);
+
+  // Obtener las asignaciones del curso seleccionado
+  useEffect(() => {
+    if (!cursoSeleccionado) return;
+
+    const fetchAsignaciones = async () => {
+      try {
+        const response = await api.get(`/courses/${cursoSeleccionado}/assignments`);
+        setAsignaciones(response.data); // Guarda las asignaciones del curso
+      } catch (error) {
+        console.error(`Error fetching assignments for course ${cursoSeleccionado}:`, error);
+        setAsignaciones([]); // Vacía las asignaciones si hay un error
+      }
+    };
+
+    fetchAsignaciones();
   }, [cursoSeleccionado]);
 
   const handleEditar = () => {
@@ -38,21 +59,25 @@ const Dashboard = () => {
     }
   };
 
-  const handleEliminar = () => {
-    if (tareaSeleccionada) {
-      // Filtrar la tarea eliminada
-      const nuevasAsignaciones = asignaciones[cursoSeleccionado].filter(
+  const handleEliminar = async () => {
+    if (!tareaSeleccionada) return;
+
+    const confirmacion = window.confirm(
+      `¿Estás seguro de que quieres eliminar la asignación "${tareaSeleccionada.assignment_name}"?`
+    );
+
+    if (!confirmacion) return;
+
+    try {
+      await api.delete(`/assignments/${tareaSeleccionada.id}`);
+      const nuevasAsignaciones = asignaciones.filter(
         (tarea) => tarea.id !== tareaSeleccionada.id
       );
-      // Actualizar estado y localStorage
-      setAsignaciones((prev) => ({
-        ...prev,
-        [cursoSeleccionado]: nuevasAsignaciones,
-      }));
-      localStorage.setItem("asignaciones", JSON.stringify(Object.values(nuevasAsignaciones).flat()));
-
-      // Limpiar selección
+      setAsignaciones(nuevasAsignaciones);
       setTareaSeleccionada(null);
+    } catch (error) {
+      console.error("Error al eliminar la asignación:", error);
+      alert("Hubo un problema al eliminar la asignación.");
     }
   };
 
@@ -107,13 +132,13 @@ const Dashboard = () => {
       <aside className="sidebar">
         <h3>Cursos</h3>
         <ul>
-          {cursosMock.map((curso) => (
+          {cursos.map((curso) => (
             <li
-              key={curso}
-              className={curso === cursoSeleccionado ? "active" : ""}
-              onClick={() => setCursoSeleccionado(curso)}
+              key={curso.id}
+              className={curso.id === cursoSeleccionado ? "active" : ""}
+              onClick={() => setCursoSeleccionado(curso.id)}
             >
-              {curso}
+              {curso.course_name}
             </li>
           ))}
         </ul>
@@ -127,7 +152,7 @@ const Dashboard = () => {
             Cerrar sesión
           </button>
         </header>
-          {/* Sección de Estudiantes */}
+        {/* Sección de Estudiantes */}
     <div className="estudiantes-section">
       <h2>Lista de Estudiantes</h2>
       
@@ -179,30 +204,35 @@ const Dashboard = () => {
 
         {/* Sección de Asignaciones */}
         <h2>Asignaciones</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Asignación</th>
-              <th>Fecha Límite</th>
-              <th>Definición</th>
-            </tr>
-          </thead>
-          <tbody>
-            {asignaciones[cursoSeleccionado]?.map((asignacion, index) => (
-              <tr
-                key={index}
-                className={tareaSeleccionada?.id === asignacion.id ? "selected" : ""}
-                onClick={() => setTareaSeleccionada(asignacion)}
-              >
-                <td>{asignacion.titulo}</td>
-                <td>{asignacion.fecha}</td>
-                <td>{asignacion.definicion}</td>
+        {asignaciones.length === 0 ? (
+          <p>No hay asignaciones en este curso.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Asignación</th>
+                <th>Fecha Límite</th>
+                <th>Definición</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {asignaciones.map((asignacion) => (
+                <tr
+                  key={asignacion.id}
+                  className={tareaSeleccionada?.id === asignacion.id ? "selected" : ""}
+                  onClick={() => setTareaSeleccionada(asignacion)}
+                >
+                  <td>{asignacion.assignment_name}</td>
+                  <td>{asignacion.assignment_end_date}</td>
+                  <td>{asignacion.task_definition}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-        <button className="add-btn" onClick={() => navigate("/createAssignment")}>+</button>
+        <button className="add-btn" onClick={() => navigate("/createAssignment", { state: { courseId: cursoSeleccionado } })}>+</button>
+
 
         <div className="btn-group">
           <button className="edit-btn" onClick={handleEditar} disabled={!tareaSeleccionada}>✏️ Editar</button>

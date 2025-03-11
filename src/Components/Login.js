@@ -1,23 +1,36 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from '../api';
 
 const Login = ({ setUserRole }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Simulación de autenticación
-    if (email === "profesor@uniandes" || email === "admin@uniandes") {
-      setUserRole("profesor"); // O "admin"
-      navigate("/dashboard");
-    } else if (email === "estudiante@uniandes") {
-      setUserRole("estudiante");
-      navigate("/studentDashboard");
-    } else {
-      alert("Acceso denegado o usuario no reconocido.");
+    try {
+      const response = await api.post('/auth/login', { email, password });
+
+      const { access_token, role } = response.data;
+
+      if (access_token) {
+        localStorage.setItem('jwt', access_token);
+      }
+
+      if (role === 'professor' || role === 'admin') {
+        setUserRole(role);
+        navigate('/dashboard');
+      } else if (role === 'student') {
+        setUserRole(role);
+        navigate('/studentDashboard');
+      } else {
+        alert('Acceso denegado o usuario no reconocido.');
+      }
+
+    } catch(error) {
+      console.error(error)
     }
   };
 

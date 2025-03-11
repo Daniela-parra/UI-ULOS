@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../api"; // Importa api.js
 import "../Styles/CreateAssignment.css";
 
+import { useLocation } from "react-router-dom";
+
 const CreateAssignment = () => {
+  const location = useLocation();
+  const courseId = location.state?.courseId; // Obtiene courseId de la navegación
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [fecha, setFecha] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
   const [definicion, setDefinicion] = useState("");
-  const [archivo, setArchivo] = useState(null);
   const [definiciones, setDefiniciones] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const definicionesGuardadas = JSON.parse(localStorage.getItem("definiciones")) || [];
-    setDefiniciones(definicionesGuardadas);
+    const fetchDefiniciones = async () => {
+      try {
+        const response = await api.get("/task-definitions"); // Obtiene las definiciones desde el backend
+        setDefiniciones(response.data);
+      } catch (error) {
+        console.error("Error al obtener definiciones:", error);
+      }
+    };
+
+    fetchDefiniciones();
   }, []);
 
   const handleDefinicionChange = (e) => {
@@ -25,26 +37,27 @@ const CreateAssignment = () => {
     }
   };
 
-  const handleGuardar = () => {
-    if (!titulo || !descripcion || !fecha || !definicion) {
+  const handleGuardar = async () => {
+    if (!titulo || !descripcion || !fechaFin || !definicion) {
       alert("Por favor completa todos los campos.");
       return;
     }
 
     const nuevaAsignacion = {
-      id: Date.now(),
-      titulo,
-      descripcion,
-      fecha,
-      definicion,
-      archivo: archivo ? archivo.name : "Sin archivo",
+      task_definition_id: Number(definicion),
+      assignment_name: titulo,
+      assignment_description: descripcion,
+      assignment_start_date: new Date().toISOString().split('.')[0] + 'Z', 
+      assignment_end_date: new Date(fechaFin).toISOString().split('.')[0] + 'Z'
     };
 
-    const asignacionesExistentes = JSON.parse(localStorage.getItem("asignaciones")) || [];
-    asignacionesExistentes.push(nuevaAsignacion);
-    localStorage.setItem("asignaciones", JSON.stringify(asignacionesExistentes));
-
-    navigate("/dashboard");
+    try {
+      await api.post(`/courses/${courseId}/assignments`, nuevaAsignacion);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error al guardar la asignación:", error);
+      alert("Hubo un problema al guardar la asignación");
+    }
   };
 
   return (
@@ -58,14 +71,16 @@ const CreateAssignment = () => {
       <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
 
       <label>Fecha Límite</label>
-      <input type="datetime-local" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+      <input type="datetime-local" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
 
       <label>Definición</label>
       <div className="definicion-container">
         <select value={definicion} onChange={handleDefinicionChange}>
-          <option value="">Seleccione un tipo</option>
-          {definiciones.map((def, index) => (
-            <option key={index} value={def}>{def}</option>
+          <option value="">Seleccione una definición</option>
+          {definiciones.map((def) => (
+            <option key={def.id} value={def.id}>
+              {def.definition_name}
+            </option>
           ))}
           <option value="crear-nueva" style={{ color: "purple" }}>
             Crear nueva definición
@@ -79,19 +94,6 @@ const CreateAssignment = () => {
           🔍
         </button>
         )}
-      </div>
-
-      <div className="file-upload-container">
-        <label htmlFor="archivo" className="file-upload-label">
-          Examinar archivo 📂
-        </label>
-        <input
-          type="file"
-          id="archivo"
-          className="file-upload-input"
-          onChange={(e) => setArchivo(e.target.files[0])}
-        />
-        {archivo && <span>{archivo.name}</span>}
       </div>
 
       <div className="btn-group">
