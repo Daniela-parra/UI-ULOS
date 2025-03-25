@@ -1,36 +1,60 @@
-import React, { useState } from "react";
-import { useNavigate} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../api";
 import "../Styles/Detail.css";
 
 const Detail = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Obtiene el id de la asignación desde la URL
   const [mostrarFeedback, setMostrarFeedback] = useState(false);
+  const [tarea, setTarea] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [submitSuccess, setSubmitSuccess] = useState(null);
 
   const toggleFeedback = () => {
     setMostrarFeedback(!mostrarFeedback);
   };
 
-  // Datos simulados para pruebas
-  const tarea = {
-    titulo: "Asig 1",
-    fechaLimite: "27/01/2025 - 12:00 AM",
-    descripcion: "Descripción completa de la asignación ...",
-    definicion: "Cypress",
-    archivosAdjuntos: [{ nombre: "ASIG1.PDF", tamano: "125 KB" }],
-    feedback: {
-      etapas: [
-        { nombre: "Parser", estado: "Completada", archivo: "PARSER.JSON", tiempo: "10 min" },
-        { nombre: "Executor", estado: "Completada", archivo: "EXECUTOR.JSON", tiempo: "15 min" }
-      ],
-      archivoFinal: { nombre: "ARCHIVOFINAL", tamano: "125 KB" },
-    },
+  useEffect(() => {
+    api
+      .get(`/assignments/${id}`)
+      .then((response) => {
+        setTarea(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los detalles de la asignación:", error);
+        setError("Error al obtener los detalles");
+        setLoading(false);
+      });
+  }, [id]);
+
+  const handleSubmitAssignment = () => {
+    // Llamada al endpoint para subir el assignment
+    api
+      .post(`/assignments/${tarea.id}/submit`)
+      .then((response) => {
+        // Puedes actualizar el estado o mostrar un mensaje de éxito
+        setSubmitSuccess("Assignment subido correctamente");
+      })
+      .catch((error) => {
+        console.error("Error al subir el assignment:", error);
+      });
   };
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="task-detail-container">
-
       <header className="header">
-         <h1 className="titulo">Detalles de la Asignación</h1>
+        <h1 className="titulo">Detalles de la Asignación</h1>
       </header>
 
       <div className="task-info">
@@ -53,11 +77,12 @@ const Detail = () => {
           <label>DEFINICIÓN</label>
           <input type="text" value={tarea.definicion} readOnly />
         </div>
+
         <div className="input-group">
-                <label>Examinar Archivo</label>
-                <div className="archivo-upload">
-                    <input type="file" id="fileInput" className="file-input" />
-                </div>
+          <label>Examinar Archivo</label>
+          <div className="archivo-upload">
+            <input type="file" id="fileInput" className="file-input" />
+          </div>
         </div>
 
         <div className="input-group">
@@ -74,7 +99,9 @@ const Detail = () => {
       </div>
 
       <div className="buttons">
-        <button className="btn upload-btn">SUBIR</button>
+        <button className="btn upload-btn" onClick={handleSubmitAssignment}>
+          SUBIR
+        </button>
         <button className="btn back-btn" onClick={() => navigate(-1)}>
           VOLVER
         </button>
@@ -82,6 +109,8 @@ const Detail = () => {
           FEEDBACK
         </button>
       </div>
+
+      {submitSuccess && <p className="success-message">{submitSuccess}</p>}
 
       {mostrarFeedback && (
         <div className="feedback-section show">
@@ -112,7 +141,8 @@ const Detail = () => {
           <div className="archivo-final">
             <label>ARCHIVO FINAL</label>
             <span>
-              {tarea.feedback.archivoFinal.nombre} ({tarea.feedback.archivoFinal.tamano})
+              {tarea.feedback.archivoFinal.nombre} (
+              {tarea.feedback.archivoFinal.tamano})
             </span>
             <button className="download-btn">Descargar</button>
           </div>

@@ -1,60 +1,74 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "../Styles/Dashboard.css";
-
-const cursosMock = ["Curso 1", "Curso 2", "Curso 3", "Curso 4"];
-
-const asignacionesMock = {
-  "Curso 1": [
-    { id: 1, titulo: "Asig 1", fecha: "24/01/2025 - 12:00 AM", estadoParser: "Completada", estadoExecutor: "Completada" },
-    { id: 2, titulo: "Asig 2", fecha: "12/01/2025 - 12:00 AM", estadoParser: "Completada", estadoExecutor: "En progreso" },
-  ],
-  "Curso 2": [
-    { id: 3, titulo: "Asig 3", fecha: "04/02/2025 - 12:00 AM", estadoParser: "En progreso", estadoExecutor: "Pendiente" },
-    { id: 4, titulo: "Asig 4", fecha: "24/04/2025 - 12:00 AM", estadoParser: "Pendiente", estadoExecutor: "Pendiente" },
-  ],
-  "Curso 3": [],
-  "Curso 4": [],
-};
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import api from '../api'
+import '../Styles/Dashboard.css'
 
 const StudentDashboard = () => {
-  const navigate = useNavigate();
-  const [cursoSeleccionado, setCursoSeleccionado] = useState("Curso 1");
-  const [asignaciones, setAsignaciones] = useState(asignacionesMock);
-  const [tareaSeleccionada, setTareaSeleccionada] = useState(null);
+  const navigate = useNavigate()
+  const [cursos, setCursos] = useState([])
+  const [cursoSeleccionado, setCursoSeleccionado] = useState(null)
+  const [asignaciones, setAsignaciones] = useState([])
+  const [tareaSeleccionada, setTareaSeleccionada] = useState(null)
 
+  // Obtiene los cursos al montar el componente
   useEffect(() => {
-    const asignacionesGuardadas = JSON.parse(localStorage.getItem("asignaciones")) || {};
-    setAsignaciones({ ...asignacionesMock, ...asignacionesGuardadas });
-  }, []);
+    api
+      .get('/courses')
+      .then((response) => {
+        const coursesData = response.data
+        setCursos(coursesData)
+        if (coursesData.length > 0) {
+          setCursoSeleccionado(coursesData[0])
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener los cursos:', error)
+      })
+  }, [])
+
+  // Cada vez que se selecciona un curso, se obtienen sus asignaciones
+  useEffect(() => {
+    if (cursoSeleccionado) {
+      api
+        .get(`/courses/${cursoSeleccionado.id}/assignments`)
+        .then((response) => {
+          setAsignaciones(response.data)
+        })
+        .catch((error) => {
+          console.error('Error al obtener asignaciones:', error)
+        })
+    }
+  }, [cursoSeleccionado])
 
   const handleVerDetalle = () => {
     if (tareaSeleccionada) {
-      navigate(`/detail/${tareaSeleccionada.id}`);
+      navigate(`/detail/${tareaSeleccionada.id}`)
     }
-  };
+  }
 
   return (
-    <div className="dashboard-container">
-      <aside className="sidebar">
+    <div className='dashboard-container'>
+      <aside className='sidebar'>
         <h3>Cursos</h3>
         <ul>
-          {cursosMock.map((curso) => (
+          {cursos.map((curso) => (
             <li
-              key={curso}
-              className={curso === cursoSeleccionado ? "active" : ""}
+              key={curso.id}
+              className={curso === cursoSeleccionado ? 'active' : ''}
               onClick={() => setCursoSeleccionado(curso)}
             >
-              {curso}
+              {curso.course_name}
             </li>
           ))}
         </ul>
       </aside>
 
-      <main className="content">
+      <main className='content'>
         <header>
-          <h1>Asignaciones - {cursoSeleccionado}</h1>
-          <button className="logout-btn" onClick={() => navigate("/")}>Cerrar sesión</button>
+          <h1>Asignaciones - {cursoSeleccionado?.course_name}</h1>
+          <button className='logout-btn' onClick={() => navigate('/')}>
+            Cerrar sesión
+          </button>
         </header>
 
         <table>
@@ -67,14 +81,16 @@ const StudentDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {asignaciones[cursoSeleccionado]?.map((asignacion) => (
+            {asignaciones.map((asignacion) => (
               <tr
                 key={asignacion.id}
-                className={tareaSeleccionada?.id === asignacion.id ? "selected" : ""}
+                className={
+                  tareaSeleccionada?.id === asignacion.id ? 'selected' : ''
+                }
                 onClick={() => setTareaSeleccionada(asignacion)}
               >
-                <td>{asignacion.titulo}</td>
-                <td>{asignacion.fecha}</td>
+                <td>{asignacion.assignment_name}</td>
+                <td>{asignacion.assignment_end_date}</td>
                 <td>{asignacion.estadoParser}</td>
                 <td>{asignacion.estadoExecutor}</td>
               </tr>
@@ -89,7 +105,7 @@ const StudentDashboard = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default StudentDashboard;
+export default StudentDashboard
