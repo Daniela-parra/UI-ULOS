@@ -224,7 +224,7 @@ const Dashboard = () => {
                 >
                   <td>{asignacion.assignment_name}</td>
                   <td>{asignacion.assignment_end_date}</td>
-                  <td>{asignacion.task_definition}</td>
+                  <td>{asignacion.task_definition.definition_name}</td>
                 </tr>
               ))}
             </tbody>
