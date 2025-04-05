@@ -1,58 +1,79 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../Styles/CreateAssignment.css";
+import api from "../api";
 
 const EditAssignment = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [fecha, setFecha] = useState("");
-  const [definicion, setDefinicion] = useState("");
-  const [archivo, setArchivo] = useState(null);
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [definicionId, setDefinicionId] = useState("");
   const [definiciones, setDefiniciones] = useState([]);
 
-  // Cargar asignaciones y definiciones desde localStorage
   useEffect(() => {
-    const asignaciones = JSON.parse(localStorage.getItem("asignaciones")) || [];
-    const tarea = asignaciones.find((asig) => asig.id === parseInt(id));
+    const fetchDatos = async () => {
+      try {
+        const resAsignacion = await api.get(`/assignments/${id}`)
+        const asignacion = resAsignacion.data
 
-    if (tarea) {
-      setTitulo(tarea.titulo);
-      setDescripcion(tarea.descripcion);
-      setFecha(tarea.fecha);
-      setDefinicion(tarea.definicion);
+        setTitulo(asignacion.assignment_name)
+        setDescripcion(asignacion.assignment_description)
+        setFechaInicio(asignacion.assignment_start_date.slice(0, 16))
+        setFechaFin(asignacion.assignment_end_date.slice(0, 16))
+        setDefinicionId(asignacion.task_definition.id)
+
+        const resDefiniciones = await api.get('/task-definitions')
+        setDefiniciones(resDefiniciones.data)
+      } catch (err) {
+        console.error('Error al cargar datos:', err)
+        alert('Error al cargar la asignación.')
+      }
     }
 
-    const definicionesGuardadas = JSON.parse(localStorage.getItem("definiciones")) || [];
-    setDefiniciones(definicionesGuardadas);
-  }, [id]);
+    fetchDatos()
+  }, [id])
 
   const handleDefinicionChange = (e) => {
     const valor = e.target.value;
     if (valor === "crear-nueva") {
       navigate("/createDefinition");
     } else {
-      setDefinicion(valor);
+      setDefinicionId(valor);
     }
   };
 
-  const handleGuardar = () => {
-    if (!titulo || !descripcion || !fecha || !definicion) {
+  const handleGuardar = async () => {
+    if (!titulo || !descripcion || !fechaInicio || !fechaFin || !definicionId) {
       alert("Por favor completa todos los campos.");
       return;
     }
 
-    const asignaciones = JSON.parse(localStorage.getItem("asignaciones")) || [];
-    const nuevasAsignaciones = asignaciones.map((asig) =>
-      asig.id === parseInt(id)
-        ? { ...asig, titulo, descripcion, fecha, definicion, archivo: archivo ? archivo.name : asig.archivo }
-        : asig
-    );
+    try {
+      await api.put(`/assignments/${id}`, {
+        assignment_name: titulo,
+        assignment_description: descripcion,
+        assignment_start_date: fechaInicio,
+        assignment_end_date: fechaFin,
+        task_definition_id: parseInt(definicionId),
+      })
 
-    localStorage.setItem("asignaciones", JSON.stringify(nuevasAsignaciones));
-    navigate("/dashboard");
-  };
+      alert('Asignación actualizada correctamente.')
+      navigate('/dashboard')
+    } catch (error) {
+      console.error('Error al actualizar asignación:', error)
+      if (error.response?.status === 400) {
+        alert(
+          error.response.data.detail ||
+            'No se puede actualizar la asignación porque ya tiene envíos.'
+        )
+      } else {
+        alert('Ocurrió un error al guardar los cambios.')
+      }
+    }
+  }
 
   return (
     <div className="crear-asignacion-container">
@@ -64,36 +85,30 @@ const EditAssignment = () => {
       <label>Descripción</label>
       <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
 
+      <label>Fecha de Inicio</label>
+      <input
+        type='datetime-local'
+        value={fechaInicio}
+        onChange={(e) => setFechaInicio(e.target.value)}
+      />
+
       <label>Fecha Límite</label>
-      <input type="datetime-local" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+      <input
+        type='datetime-local'
+        value={fechaFin}
+        onChange={(e) => setFechaFin(e.target.value)}
+      />
 
       <label>Definición</label>
       <div className="definicion-container">
-        <select value={definicion} onChange={handleDefinicionChange}>
+        <select value={definicionId} onChange={handleDefinicionChange}>
           <option value="">Seleccione un tipo</option>
-          {definiciones.map((def, index) => (
-            <option key={index} value={def}>{def}</option>
+          {definiciones.map((def) => (
+            <option key={def.id} value={def.id}>
+              {def.definition_name}
+            </option>
           ))}
-          <option value="crear-nueva" style={{ color: "purple" }}>
-            Crear nueva definición
-          </option>
         </select>
-        {definicion && definicion !== "crear-nueva" && (
-          <button
-            className="btn-lupa"
-            onClick={() => navigate(`/descriptionDefinition/${definicion}`)}
-          >
-            🔍
-          </button>
-        )}
-      </div>
-
-      <div className="file-upload-container">
-        <label htmlFor="archivo" className="file-upload-label">
-          Examinar archivo 📂
-        </label>
-        <input type="file" id="archivo" className="file-upload-input" onChange={(e) => setArchivo(e.target.files[0])} />
-        {archivo && <span>{archivo.name}</span>}
       </div>
 
       <div className="btn-group">
