@@ -11,6 +11,7 @@ const Detail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
+  const [archivo, setArchivo] = useState(null);
 
   const toggleFeedback = () => {
     setMostrarFeedback(!mostrarFeedback);
@@ -30,17 +31,25 @@ const Detail = () => {
       });
   }, [id]);
 
-  const handleSubmitAssignment = () => {
-    // Llamada al endpoint para subir el assignment
-    api
-      .post(`/assignments/${tarea.id}/submit`)
-      .then((response) => {
-        // Puedes actualizar el estado o mostrar un mensaje de éxito
-        setSubmitSuccess("Assignment subido correctamente");
-      })
-      .catch((error) => {
-        console.error("Error al subir el assignment:", error);
+  const handleSubmitAssignment = async () => {
+    if (!archivo) {
+      alert("Por favor, seleccione un archivo para subir.");
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append("file", archivo);
+
+    try {
+      await api.post(`/assignments/${tarea.id}/submit`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
+      setSubmitSuccess("Assignment subido correctamente");
+    } catch (error) {
+      console.error("Error al subir el assignment:", error);
+    }
   };
 
   if (loading) {
@@ -60,41 +69,34 @@ const Detail = () => {
       <div className="task-info">
         <div className="input-group">
           <label>TÍTULO</label>
-          <input type="text" value={tarea.titulo} readOnly />
+          <input type="text" value={tarea.assignment_name} readOnly />
         </div>
 
         <div className="input-group">
           <label>FECHA LÍMITE</label>
-          <input type="text" value={tarea.fechaLimite} readOnly />
+          <input type="text" value={tarea.assignment_end_date} readOnly />
         </div>
 
         <div className="input-group">
           <label>DESCRIPCIÓN</label>
-          <textarea value={tarea.descripcion} readOnly />
+          <textarea value={tarea.assignment_description} readOnly />
         </div>
 
         <div className="input-group">
           <label>DEFINICIÓN</label>
-          <input type="text" value={tarea.definicion} readOnly />
+          <input type="text" value={tarea.task_definition.definition_name} readOnly />
         </div>
 
         <div className="input-group">
           <label>Examinar Archivo</label>
           <div className="archivo-upload">
-            <input type="file" id="fileInput" className="file-input" />
+            <input
+              type="file"
+              id="fileInput"
+              className="file-input"
+              onChange={(e) => setArchivo(e.target.files[0])}
+            />
           </div>
-        </div>
-
-        <div className="input-group">
-          <label>ARCHIVOS ADJUNTOS</label>
-          {tarea.archivosAdjuntos.map((archivo, index) => (
-            <div key={index} className="archivo">
-              <span>
-                {archivo.nombre} ({archivo.tamano})
-              </span>
-              <button className="download-btn">Descargar</button>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -141,8 +143,7 @@ const Detail = () => {
           <div className="archivo-final">
             <label>ARCHIVO FINAL</label>
             <span>
-              {tarea.feedback.archivoFinal.nombre} (
-              {tarea.feedback.archivoFinal.tamano})
+              {tarea.feedback.archivoFinal.nombre} ({tarea.feedback.archivoFinal.tamano})
             </span>
             <button className="download-btn">Descargar</button>
           </div>
