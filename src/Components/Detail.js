@@ -5,18 +5,20 @@ import "../Styles/Detail.css";
 
 const Detail = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // Obtiene el id de la asignación desde la URL
+  const { id } = useParams(); // Id de la asignación desde la URL
   const [mostrarFeedback, setMostrarFeedback] = useState(false);
   const [tarea, setTarea] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
   const [archivo, setArchivo] = useState(null);
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
   const toggleFeedback = () => {
     setMostrarFeedback(!mostrarFeedback);
   };
 
+  // Obtener detalles de la asignación
   useEffect(() => {
     api
       .get(`/assignments/${id}`)
@@ -31,24 +33,48 @@ const Detail = () => {
       });
   }, [id]);
 
+
+  useEffect(() => {
+    const checkSubmission = async () => {
+      if (tarea) {
+        try {
+          const tasksResponse = await api.get(`/tasks?assignment_id=${tarea.id}`);
+          if (tasksResponse.data !== null) {
+            setAlreadySubmitted(true);
+          }
+        } catch (error) {
+          console.error("Error al verificar el envío previo:", error);
+        }
+      }
+    };
+
+    checkSubmission();
+  }, [tarea]);
+
+
   const handleSubmitAssignment = async () => {
+    if (alreadySubmitted) {
+      alert("Ya has enviado tu assignment y no puedes enviarlo nuevamente.");
+      return;
+    }
+
     if (!archivo) {
       alert("Por favor, seleccione un archivo para subir.");
       return;
     }
-    
+
     const formData = new FormData();
     formData.append("file", archivo);
 
     try {
       await api.post(`/assignments/${tarea.id}/submit`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
       setSubmitSuccess("Assignment subido correctamente");
+      setAlreadySubmitted(true);
     } catch (error) {
       console.error("Error al subir el assignment:", error);
+      alert("Hubo un error al subir el assignment.");
     }
   };
 
@@ -95,14 +121,19 @@ const Detail = () => {
               id="fileInput"
               className="file-input"
               onChange={(e) => setArchivo(e.target.files[0])}
+              disabled={alreadySubmitted}
             />
           </div>
         </div>
       </div>
 
       <div className="buttons">
-        <button className="btn upload-btn" onClick={handleSubmitAssignment}>
-          SUBIR
+        <button
+          className="btn upload-btn"
+          onClick={handleSubmitAssignment}
+          disabled={alreadySubmitted}
+        >
+          {alreadySubmitted ? "Envío realizado" : "SUBIR"}
         </button>
         <button className="btn back-btn" onClick={() => navigate(-1)}>
           VOLVER
