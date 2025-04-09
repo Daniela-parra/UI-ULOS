@@ -6,7 +6,6 @@ import Dashboard from "./Components/Dashboard"; // Nueva pantalla del profesor/a
 import CreateAssignment from "./Components/CreateAssignment";
 import FeedbackAssignment from "./Components/FeedbackAssigment";
 import EditAssignment from "./Components/EditAssignment";
-import CreateDefinition from "./Components/CreateDefinition";
 import DescriptionDefinition from "./Components/DescriptionDefinition";
 import StudentDashboard from "./Components/StudentDashboard";
 import Detail from "./Components/Detail";
@@ -24,8 +23,7 @@ function App() {
         <Route path="/createAssignment" element={userRole ? <CreateAssignment /> : <Navigate to="/" />} />
         <Route path="/feedback/:id" element={<FeedbackAssignment />} />
         <Route path="/editAssignment/:id" element={<EditAssignment />} />
-        <Route path="/createDefinition" element={userRole ? <CreateDefinition /> : <Navigate to="/" />} />
-        <Route path="/descriptionDefinition/:nombreDefinicion" element={<DescriptionDefinition />} />
+        <Route path="/descriptionDefinition/:id" element={<DescriptionDefinition />} />
         <Route path="/detail/:id" element={<Detail />} />
       </Routes>
     </Router>

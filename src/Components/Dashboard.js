@@ -12,6 +12,22 @@ const Dashboard = () => {
   const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState(null);
 
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    const formattedDate = date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const formattedTime = date.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    return `${formattedDate} ${formattedTime}`;
+  };
+
   // Función para obtener la lista de estudiantes del curso seleccionado
   const fetchEstudiantes = async () => {
     if (!cursoSeleccionado) return;
@@ -169,7 +185,7 @@ const Dashboard = () => {
       {/* Contenido principal */}
       <main className="content">
         <header>
-          <h1>Asignaciones - {cursoSeleccionado}</h1>
+          <h1>Asignaciones</h1>
           <button className="logout-btn" onClick={() => navigate("/")}>
             Cerrar sesión
           </button>
@@ -204,7 +220,11 @@ const Dashboard = () => {
                   <tr
                     key={est.id}
                     className={estudianteSeleccionado?.id === est.id ? "selected" : ""}
-                    onClick={() => setEstudianteSeleccionado(est)}
+                    onClick={() =>
+                      setEstudianteSeleccionado((prev) =>
+                        prev && prev.id === est.id ? null : est
+                      )
+                    }
                   >
                     <td>{est.email}</td>
                   </tr>
@@ -239,10 +259,14 @@ const Dashboard = () => {
                 <tr
                   key={asignacion.id}
                   className={tareaSeleccionada?.id === asignacion.id ? "selected" : ""}
-                  onClick={() => setTareaSeleccionada(asignacion)}
+                  onClick={() =>
+                    setTareaSeleccionada((prev) =>
+                      prev && prev.id === asignacion.id ? null : asignacion
+                    )
+                  }
                 >
                   <td>{asignacion.assignment_name}</td>
-                  <td>{asignacion.assignment_end_date}</td>
+                  <td>{formatTimestamp(asignacion.assignment_end_date)}</td>
                   <td>{asignacion.task_definition.definition_name}</td>
                 </tr>
               ))}

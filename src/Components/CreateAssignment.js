@@ -30,11 +30,7 @@ const CreateAssignment = () => {
 
   const handleDefinicionChange = (e) => {
     const valor = e.target.value;
-    if (valor === "crear-nueva") {
-      navigate("/createDefinition");
-    } else {
-      setDefinicion(valor);
-    }
+    setDefinicion(valor);
   };
 
   const handleGuardar = async () => {
@@ -82,9 +78,6 @@ const CreateAssignment = () => {
               {def.definition_name}
             </option>
           ))}
-          <option value="crear-nueva" style={{ color: "purple" }}>
-            Crear nueva definición
-          </option>
         </select>
         {definicion && definicion !== "crear-nueva" && (
           <button
