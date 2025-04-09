@@ -46,7 +46,7 @@ const EditAssignment = () => {
   };
 
   const handleGuardar = async () => {
-    if (!titulo || !descripcion || !fechaInicio || !fechaFin || !definicionId) {
+    if (!titulo || !descripcion || !fechaFin || !definicionId) {
       alert("Por favor completa todos los campos.");
       return;
     }
@@ -85,12 +85,6 @@ const EditAssignment = () => {
       <label>Descripción</label>
       <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
 
-      <label>Fecha de Inicio</label>
-      <input
-        type='datetime-local'
-        value={fechaInicio}
-        onChange={(e) => setFechaInicio(e.target.value)}
-      />
 
       <label>Fecha Límite</label>
       <input

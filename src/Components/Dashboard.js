@@ -14,18 +14,12 @@ const Dashboard = () => {
 
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "";
-    const date = new Date(timestamp);
-    const formattedDate = date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-    const formattedTime = date.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-    return `${formattedDate} ${formattedTime}`;
+    const year = timestamp.slice(0, 4);
+    const month = timestamp.slice(5, 7);
+    const day = timestamp.slice(8, 10);
+    const hour = timestamp.slice(11, 13);
+    const minute = timestamp.slice(14, 16);
+    return `${day}/${month}/${year} ${hour}:${minute}`;
   };
 
   // Función para obtener la lista de estudiantes del curso seleccionado
