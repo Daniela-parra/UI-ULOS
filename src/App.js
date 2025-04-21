@@ -21,7 +21,7 @@ function App() {
         <Route path="/dashboard" element={userRole ? <Dashboard /> : <Navigate to="/" />} />
         <Route path="/studentDashboard" element={userRole === "student" ? <StudentDashboard /> : <Navigate to="/" />} />
         <Route path="/createAssignment" element={userRole ? <CreateAssignment /> : <Navigate to="/" />} />
-        <Route path="/feedback/:id" element={<FeedbackAssignment />} />
+        <Route path="/feedback/:assignmentId" element={<FeedbackAssignment />} />
         <Route path="/editAssignment/:id" element={<EditAssignment />} />
         <Route path="/descriptionDefinition/:id" element={<DescriptionDefinition />} />
         <Route path="/detail/:id" element={<Detail />} />
