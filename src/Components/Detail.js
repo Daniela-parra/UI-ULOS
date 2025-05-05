@@ -5,51 +5,76 @@ import "../Styles/Detail.css";
 
 const Detail = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // Id de la asignación desde la URL
+  const { id: assignmentId } = useParams();
   const [mostrarFeedback, setMostrarFeedback] = useState(false);
   const [tarea, setTarea] = useState(null);
+  const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
   const [archivo, setArchivo] = useState(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
-  const toggleFeedback = () => {
-    setMostrarFeedback(!mostrarFeedback);
-  };
-
-  // Obtener detalles de la asignación
   useEffect(() => {
+    setLoading(true)
+    setError(null);
     api
-      .get(`/assignments/${id}`)
+      .get(`/assignments/${assignmentId}`)
       .then((response) => {
         setTarea(response.data);
-        setLoading(false);
       })
       .catch((error) => {
         console.error("Error al obtener los detalles de la asignación:", error);
-        setError("Error al obtener los detalles");
+        setError("Error al obtener los detalles de la asignación");
         setLoading(false);
       });
-  }, [id]);
-
+  }, [assignmentId]);
 
   useEffect(() => {
-    const checkSubmission = async () => {
-      if (tarea) {
-        try {
-          const tasksResponse = await api.get(`/tasks?assignment_id=${tarea.id}`);
-          if (tasksResponse.data !== null) {
-            setAlreadySubmitted(true);
-          }
-        } catch (error) {
-          console.error("Error al verificar el envío previo:", error);
+    if (!tarea) {
+      return;
+    }
+    setTaskDetails(null);
+    setAlreadySubmitted(false);
+
+    const fetchTaskAndCheckSubmission = async () => {
+      try {
+        const response = await api.get(`/tasks?assignment_id=${tarea.id}`);
+
+        let foundTask = null;
+        if (Array.isArray(response.data) && response.data.length > 0) {
+            foundTask = response.data[0];
+        } else if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+            foundTask = response.data;
         }
+
+        if (foundTask) {
+          setTaskDetails(foundTask);
+          setAlreadySubmitted(true);
+        } else {
+           setAlreadySubmitted(false);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setAlreadySubmitted(false);
+          console.log("No previous submission found for this assignment.");
+        } else {
+          console.error("Error al verificar/obtener el task:", error);
+          setError("Error al verificar el estado del envío. Inténtalo de nuevo.");
+          setAlreadySubmitted(false);
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
-    checkSubmission();
+    fetchTaskAndCheckSubmission();
   }, [tarea]);
+
+
+  const toggleFeedback = () => {
+    setMostrarFeedback(!mostrarFeedback);
+  };
 
 
   const handleSubmitAssignment = async () => {
@@ -67,14 +92,36 @@ const Detail = () => {
     formData.append("file", archivo);
 
     try {
-      await api.post(`/assignments/${tarea.id}/submit`, formData, {
+      const submissionResponse = await api.post(`/assignments/${tarea.id}/submit`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setSubmitSuccess("Assignment subido correctamente");
       setAlreadySubmitted(true);
+      setArchivo(null);
+
+      if (submissionResponse.data) {
+          setTaskDetails(submissionResponse.data);
+      } else {
+          try {
+              const taskResponse = await api.get(`/tasks?assignment_id=${tarea.id}`);
+               let foundTask = null;
+              if (Array.isArray(taskResponse.data) && taskResponse.data.length > 0) {
+                  foundTask = taskResponse.data[0];
+              } else if (taskResponse.data && typeof taskResponse.data === 'object' && !Array.isArray(taskResponse.data)) {
+                  foundTask = taskResponse.data;
+              }
+              setTaskDetails(foundTask);
+          } catch(fetchError) {
+              console.error("Error fetching task details after submission:", fetchError);
+              setError("Envío exitoso, pero no se pudieron cargar los detalles del feedback.")
+          }
+      }
+
     } catch (error) {
       console.error("Error al subir el assignment:", error);
       alert("Hubo un error al subir el assignment.");
+      setSubmitSuccess(null);
+    } finally {
     }
   };
 
@@ -86,6 +133,10 @@ const Detail = () => {
     return <div>{error}</div>;
   }
 
+   if (!tarea) {
+       return <div>No se encontraron detalles para esta asignación.</div>;
+   }
+
   return (
     <div className="task-detail-container">
       <header className="header">
@@ -93,91 +144,83 @@ const Detail = () => {
       </header>
 
       <div className="task-info">
+         <div className="input-group">
+           <label>TÍTULO</label>
+           <input type="text" value={tarea.assignment_name || ''} readOnly />
+         </div>
         <div className="input-group">
-          <label>TÍTULO</label>
-          <input type="text" value={tarea.assignment_name} readOnly />
-        </div>
+           <label>FECHA LÍMITE</label>
+           <input type="text" value={new Date(tarea.assignment_end_date).toLocaleString() || ''} readOnly />
+         </div>
 
-        <div className="input-group">
-          <label>FECHA LÍMITE</label>
-          <input type="text" value={tarea.assignment_end_date} readOnly />
-        </div>
+         <div className="input-group">
+           <label>DESCRIPCIÓN</label>
+           <textarea value={tarea.assignment_description || ''} readOnly />
+         </div>
 
-        <div className="input-group">
-          <label>DESCRIPCIÓN</label>
-          <textarea value={tarea.assignment_description} readOnly />
-        </div>
+         <div className="input-group">
+           <label>DEFINICIÓN</label>
+           <input type="text" value={tarea.task_definition?.definition_name || ''} readOnly />
+         </div>
 
-        <div className="input-group">
-          <label>DEFINICIÓN</label>
-          <input type="text" value={tarea.task_definition.definition_name} readOnly />
-        </div>
-
-        <div className="input-group">
-          <label>Examinar Archivo</label>
-          <div className="archivo-upload">
-            <input
-              type="file"
-              id="fileInput"
-              className="file-input"
-              onChange={(e) => setArchivo(e.target.files[0])}
-              disabled={alreadySubmitted}
-            />
-          </div>
-        </div>
-      </div>
+         <div className="input-group">
+           <label htmlFor="fileInput">Examinar Archivo</label>
+           <div className="archivo-upload">
+             <input
+               type="file"
+               id="fileInput"
+               className="file-input"
+               onChange={(e) => setArchivo(e.target.files[0])}
+               disabled={alreadySubmitted}
+             />
+              {archivo && !alreadySubmitted && <span>{archivo.name}</span>}
+           </div>
+         </div>
+       </div>
 
       <div className="buttons">
         <button
           className="btn upload-btn"
           onClick={handleSubmitAssignment}
-          disabled={alreadySubmitted}
+          disabled={alreadySubmitted || !archivo}
         >
           {alreadySubmitted ? "Envío realizado" : "SUBIR"}
         </button>
         <button className="btn back-btn" onClick={() => navigate(-1)}>
           VOLVER
         </button>
-        <button className="btn feedback-btn" onClick={toggleFeedback}>
-          FEEDBACK
-        </button>
+        {alreadySubmitted && taskDetails && (
+          <button className="btn feedback-btn" onClick={toggleFeedback}>
+            {mostrarFeedback ? "OCULTAR FEEDBACK" : "VER FEEDBACK"}
+          </button>
+        )}
       </div>
 
       {submitSuccess && <p className="success-message">{submitSuccess}</p>}
 
-      {mostrarFeedback && (
+      {mostrarFeedback && alreadySubmitted && taskDetails && (
         <div className="feedback-section show">
-          <h2>Feedback</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Etapa</th>
-                <th>Estado</th>
-                <th>Archivo</th>
-                <th>Tiempo de duración</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tarea.feedback.etapas.map((etapa, index) => (
-                <tr key={index}>
-                  <td>{etapa.nombre}</td>
-                  <td>{etapa.estado}</td>
-                  <td>
-                    <button className="download-btn">{etapa.archivo}</button>
-                  </td>
-                  <td>{etapa.tiempo}</td>
+          <h2>Feedback del Procesamiento</h2>
+          {taskDetails.stage_statuses && taskDetails.stage_statuses.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Etapa</th>
+                  <th>Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="archivo-final">
-            <label>ARCHIVO FINAL</label>
-            <span>
-              {tarea.feedback.archivoFinal.nombre} ({tarea.feedback.archivoFinal.tamano})
-            </span>
-            <button className="download-btn">Descargar</button>
-          </div>
+              </thead>
+              <tbody>
+                {taskDetails.stage_statuses.map((status) => (
+                  <tr key={status.id}>
+                    <td>{status.processing_stage?.stage_name || 'N/A'}</td>
+                    <td>{status.processing_status?.status_name || 'N/A'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>El procesamiento está en curso o aún no hay feedback detallado.</p>
+          )}
         </div>
       )}
     </div>
