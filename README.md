@@ -79,7 +79,7 @@ ULOS is a web platform developed to facilitate the management and automated feed
 - **Frontend:** React.js
 - **Language:** JavaScript
 - **Styles:** Tailwind CSS
-- **Backend:** (Integrated externally)
+- **API:** (Integrated externally)
 
 ## Installing and Running Locally
 
